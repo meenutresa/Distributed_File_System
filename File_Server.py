@@ -13,8 +13,13 @@ class file_server:
             File_size = 'No file name given'
             return File_size
         else:
-            File_size = os.path.getsize(File_name)
-            return File_size
+            if os.path.isfile(File_name) :
+                with open(File_name) as f:
+                    return f.read()
+            else:
+                return "file doesnot exist"
+            #File_size = os.path.getsize(File_name)
+            #return File_size
 
 
 if __name__ == "__main__":
