@@ -15,18 +15,25 @@ class directory_server:
             return File_size
         else:
             if File_name == '*':
-                database = shelve.open("directory_names.dat")
-                file_keys = list(database.keys())
-                file_keys.sort()
-                list_of_files_available = ""
-                for i in range(len(file_keys)):
-                    list_of_files_available = list_of_files_available + str((i+1)) + "   " + str(file_keys[i] + "\n")
-                database.close()
+                try:
+                    database = shelve.open("directory_names.dat")
+                    file_keys = list(database.keys())
+                    file_keys.sort()
+                    list_of_files_available = ""
+                    for i in range(len(file_keys)):
+                        list_of_files_available = list_of_files_available + str((i+1)) + "   " + str(file_keys[i] + "\n")
+                finally:
+                    database.close()
                 return list_of_files_available
             else:
-                database = shelve.open("directory_names.dat")
-                filepath = database[File_name]+'/'+ File_name
-                database.close()
+                try:
+                    database = shelve.open("directory_names.dat")
+                    filepath = database[File_name]+'/'+ File_name
+                except KeyError as err:
+                    filepath = "file not found"
+                    return filepath
+                finally:
+                    database.close()
                 return filepath
 
 if __name__ == "__main__":
