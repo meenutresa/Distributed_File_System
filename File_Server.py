@@ -7,7 +7,7 @@ urls = (
 )
 
 class file_server:
-    #This gets the file path and returns the file size
+    #This gets the file path and returns the file content
     def GET(self, File_name):
         if not File_name:
             File_size = 'No file name given'
