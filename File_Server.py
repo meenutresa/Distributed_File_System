@@ -2,10 +2,11 @@ import web
 import os
 
 urls = (
-    '/(.*)','hello'
+    '/(.*)','file_server'
 )
 
-class hello:
+class file_server:
+    #This gets the file path and returns the file size
     def GET(self, File_name):
         if not File_name:
             File_size = 'No file name given'
