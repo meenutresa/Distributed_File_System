@@ -1,6 +1,7 @@
 import web
 import os
 import shelve
+import MyApplication
 
 urls = (
     '/(.*)','directory_server'
@@ -37,5 +38,5 @@ class directory_server:
                 return filepath
 
 if __name__ == "__main__":
-    app = web.application(urls, globals())
-    app.run()
+    app = MyApplication.MyApplication(urls, globals())
+    app.run(port=8081)

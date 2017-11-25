@@ -1,5 +1,6 @@
 import web
 import os
+import MyApplication
 
 urls = (
     '/(.*)','file_server'
@@ -17,5 +18,5 @@ class file_server:
 
 
 if __name__ == "__main__":
-    app = web.application(urls, globals())
-    app.run()
+    app = MyApplication.MyApplication(urls, globals())
+    app.run(port=8080)
