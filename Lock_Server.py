@@ -5,6 +5,7 @@ import MyApplication
 
 urls = (
     '/(.*)','lock_server'
+    '/unlock/(.*)','lockserver_unlock'
 )
 
 class lock_server:
@@ -63,6 +64,27 @@ class lock_server:
             finally:
                 database.close()
 
+class lockserver_unlock:
+    #class is created to handle unlock functionality
+    def POST(self, File_name):
+        #The method takes in the file name which should be unlocked.
+        if not File_name:
+            File_size = 'No input given'
+            return File_size
+        else:
+            try:
+                database = shelve.open("lock_files.dat")
+                lock = database[File_name]
+                if "Lock" == lock:
+                    database[File_name] = 'NoLock'
+                    return str(File_name) + ' is unlocked now'
+                else:
+                    return 'The file ' + str(File_name) +' is already unlocked'
+            except KeyError as err:
+                error = "file not found"
+                return error
+            finally:
+                database.close()
 
 if __name__ == "__main__":
     app = MyApplication.MyApplication(urls, globals())
