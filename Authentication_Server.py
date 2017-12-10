@@ -10,7 +10,7 @@ from cryptography.fernet import Fernet
 
 urls = (
     '/','auth_index',
-    '/login','auth_login'
+    '/login','auth_login',
     '/getKey','auth_getKey'
 )
 
@@ -21,6 +21,7 @@ def Encript_Ticket(arg_ticket):
         server_encrypt_key_file = shelve.open('server_encrypt_key.dat')
         server_encrypt_key = server_encrypt_key_file['1']
         server_cipher = Fernet(server_encrypt_key)
+        print("server_encrypt_key: ",server_encrypt_key)
         #ticket_encoded = arg_ticket.encode()
         ticket_encrypted = server_cipher.encrypt(arg_ticket)
     finally:
@@ -47,7 +48,7 @@ class auth_login:
             #print("inside first if")
             authreq = True
         else:
-            #print("inside fiest else")
+            print("inside fiest else")
             auth = re.sub('^Basic ','',auth)
             username,password = base64.decodestring(auth.encode()).decode().split(':')
             print(username)
@@ -88,10 +89,11 @@ class auth_getKey:
     def GET(self):
         #This is used by the other servers which are part of distributed system to get the server encrypt key. This is shared between the Authentication server and other servers.
         try:
+            print("inside inside auth_getkey")
             server_encrypt_key_file = shelve.open('server_encrypt_key.dat')
             server_encrypt_key = server_encrypt_key_file['1']
         finally:
-            server_encrypt_key_file.cloe()
+            server_encrypt_key_file.close()
         return server_encrypt_key
 
 if __name__=='__main__':
