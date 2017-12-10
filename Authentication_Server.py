@@ -11,6 +11,7 @@ from cryptography.fernet import Fernet
 urls = (
     '/','auth_index',
     '/login','auth_login'
+    '/getKey','auth_getKey'
 )
 
 def Encript_Ticket(arg_ticket):
@@ -82,6 +83,16 @@ class auth_login:
             web.header('WWW-Authenticate','Basic realm="Client Authentication"')
             web.ctx.status = '401 Unauthorized'
             return
+
+class auth_getKey:
+    def GET(self):
+        #This is used by the other servers which are part of distributed system to get the server encrypt key. This is shared between the Authentication server and other servers.
+        try:
+            server_encrypt_key_file = shelve.open('server_encrypt_key.dat')
+            server_encrypt_key = server_encrypt_key_file['1']
+        finally:
+            server_encrypt_key_file.cloe()
+        return server_encrypt_key
 
 if __name__=='__main__':
     app = MyApplication.MyApplication(urls, globals())
