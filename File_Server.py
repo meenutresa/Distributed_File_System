@@ -21,6 +21,20 @@ class file_server:
             #File_size = os.path.getsize(File_name)
             #return File_size
 
+    def POST(self, File_name):
+        if not File_name:
+            File_size = 'No file name given'
+            return File_size
+        else:
+            if os.path.isfile(File_name) :
+                with open(File_name,'w') as f:
+                    f.write(web.data().decode())
+                    return "Written successfully!"
+            else:
+                return "file doesnot exist"
+            #File_size = os.path.getsize(File_name)
+            #return File_size
+
 
 if __name__ == "__main__":
     app = MyApplication.MyApplication(urls, globals())
