@@ -27,7 +27,7 @@ def decryption(encrypt_message):
     return message
 
 
-def client_proxy(filename,operation):
+def client_proxy(filename,operation,arg_payload):
     #Client proxy handles teh flow to each of the servers for the operations that the client chooses
     #Call to the directory server.This is irrespective of the operation if it is write or wrong
     encrypt_filename = encryption(filename)
@@ -56,17 +56,36 @@ def client_proxy(filename,operation):
         encrypt_lock = lock_server_response.text
         islock = decryption(encrypt_lock).decode()
         print("islock:",islock)
-
-        #unlock
-        encrypt_ls_filename = encryption(filename)
-        print("encrypt_filename:",encrypt_ls_filename)
-        lock_server_unlock_url = "http://localhost:8082/unlock/"+str(len(str(len(encrypt_ls_filename))))+str(len(encrypt_ls_filename))+encrypt_ls_filename.decode()+ticket.decode()
-        lock_server_response = r.post(lock_server_unlock_url)
-        encrypt_lock = lock_server_response.text
-        islock = decryption(encrypt_lock).decode()
-        print("islock:",islock)
-
-
+        if islock == "The file is not locked":
+            #lock the file
+            encrypt_ls_filename = encryption(filename)
+            print("encrypt_filename:",encrypt_ls_filename)
+            lock_server_url = "http://localhost:8082/"+str(len(str(len(encrypt_ls_filename))))+str(len(encrypt_ls_filename))+encrypt_ls_filename.decode()+ticket.decode()
+            lock_server_response = r.post(lock_server_url)
+            encrypt_lock = lock_server_response.text
+            islock = decryption(encrypt_lock).decode()
+            print("islock:",islock)
+            #Write into the file in the file server
+            encrypt_fs_filepath = encryption(filepath)
+            print("encrypt_fs_filepath:",encrypt_fs_filepath)
+            file_server_url = "http://localhost:8080/"+str(len(str(len(encrypt_fs_filepath))))+str(len(encrypt_fs_filepath))+encrypt_fs_filepath.decode()+ticket.decode()
+            fs_payload = arg_payload
+            encrypt_fs_payload = encryption(fs_payload)
+            print("encrypt_fs_payload:",encrypt_fs_payload)
+            encrypt_fs_payload_sent = str(len(str(len(encrypt_fs_payload))))+str(len(encrypt_fs_payload))+encrypt_fs_payload.decode()+ticket.decode()
+            print("encrypt_fs_payload_sent:",encrypt_fs_payload_sent)
+            file_server_response = r.post(file_server_url,data=encrypt_fs_payload_sent)
+            encrypt_filecontent = file_server_response.text
+            filecontent = decryption(encrypt_filecontent).decode()
+            print("filecontent:",filecontent)
+            #unlock
+            encrypt_ls_filename = encryption(filename)
+            print("encrypt_filename:",encrypt_ls_filename)
+            lock_server_unlock_url = "http://localhost:8082/unlock/"+str(len(str(len(encrypt_ls_filename))))+str(len(encrypt_ls_filename))+encrypt_ls_filename.decode()+ticket.decode()
+            lock_server_response = r.post(lock_server_unlock_url)
+            encrypt_lock = lock_server_response.text
+            islock = decryption(encrypt_lock).decode()
+            print("islock:",islock)
 
 usename = input("Enter the username : ")
 password = input("Enter the password : ")
@@ -91,4 +110,7 @@ else:
 
     filename = input("Enter the filename : ")
     operation = input("Enter the operation : ")
-    client_proxy(filename,operation)
+    payload = ""
+    if operation == "write":
+        payload = input("Enter the content : ")
+    client_proxy(filename,operation,payload)

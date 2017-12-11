@@ -79,7 +79,10 @@ class file_server:
         else:
             if os.path.isfile(File_name) :
                 with open(File_name,'w') as f:
-                    f.write(web.data().decode())
+                    print("web.data():",web.data())
+                    fcontent = self.decrypt_filename(web.data().decode()).decode()
+                    print("fcontent: ",fcontent)
+                    f.write(fcontent)
                     message = "Written successfully!"
                     encrypt_message = self.encryption(message)
                     return encrypt_message
