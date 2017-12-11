@@ -4,6 +4,7 @@ import MyApplication
 import requests as r
 from cryptography.fernet import Fernet
 import base64
+import sys
 
 urls = (
     '/(.*)','file_server'
@@ -95,5 +96,6 @@ class file_server:
 
 
 if __name__ == "__main__":
+    port = int(sys.argv[1])
     app = MyApplication.MyApplication(urls, globals())
-    app.run(port=8080)
+    app.run(port=port)

@@ -49,15 +49,21 @@ class directory_server:
         filename = client_cipher.decrypt(encrypt_filename.encode())
         return filename
 
+    def add_encrypt_port(self,port):
+        encrypt_port = self.encryption(port)
+        return encrypt_port
+
     #This gets the name of the file and returns the path of the file
     #if just '*' is passed, it displays all the files that the directory server handles
     def GET(self, File_name):
+        print("inside directory server")
         File_name = self.decrypt_filename(File_name).decode()
         print("File_name: ",File_name)
         if not File_name:
             message = 'No input given'
             encrypt_message = self.encryption(message)
-            return encrypt_message
+            encrypt_port = ""
+            return str(len(str(len(encrypt_message))))+str(len(encrypt_message))+encrypt_message.decode()+encrypt_port
         else:
             if File_name == '*':
                 try:
@@ -70,19 +76,23 @@ class directory_server:
                 finally:
                     database.close()
                 encrypt_list_of_files_available = self.encryption(list_of_files_available)
-                return encrypt_list_of_files_available
+                encrypt_port = ""
+                return str(len(str(len(encrypt_list_of_files_available))))+str(len(encrypt_list_of_files_available))+encrypt_list_of_files_available.decode()+encrypt_port
             else:
                 try:
                     database = shelve.open("directory_names.dat")
-                    filepath = database[File_name]+'/'+ File_name
+                    (filepath_t,port) = database[File_name]
+                    filepath = filepath_t+'/'+ File_name
                 except KeyError as err:
                     filepath = "file not found"
                     encrypt_filepath = self.encryption(filepath)
-                    return encrypt_filepath
+                    encrypt_port = ""
+                    return str(len(str(len(encrypt_filepath))))+str(len(encrypt_filepath))+encrypt_filepath.decode()+encrypt_port
                 finally:
                     database.close()
                 encrypt_filepath = self.encryption(filepath)
-                return encrypt_filepath
+                encrypt_port = self.add_encrypt_port(port)
+                return str(len(str(len(encrypt_filepath))))+str(len(encrypt_filepath))+encrypt_filepath.decode()+encrypt_port.decode()
 
 
 
